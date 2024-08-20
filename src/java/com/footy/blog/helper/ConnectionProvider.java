@@ -18,8 +18,10 @@ public class ConnectionProvider {
                 Class.forName("com.mysql.jdbc.Driver"); 
             
                 // create connection
-            
-                con = DriverManager.getConnection("jdbc:mysql://localhost:3306/footyblog", "root", "sdeep");
+                String url = System.getenv("DB_URL");
+                String user = System.getenv("DB_USER");
+                String password = System.getenv("DB_PASSWORD");
+                con = DriverManager.getConnection(url, user, password);
             
             }
             
