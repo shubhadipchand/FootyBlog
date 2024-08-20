@@ -17,8 +17,8 @@ RUN apt-get update && \
 # Set the working directory in the container
 WORKDIR /usr/local/tomcat
 
-# Copy the WAR file to the Tomcat webapps directory as ROOT.war
-COPY ROOT.war /usr/local/tomcat/webapps/ROOT.war
+# Copy the WAR file to the Tomcat webapps directory
+COPY FootyBlog.war /usr/local/tomcat/webapps/FootyBlog.war
 
 # Expose the port Tomcat runs on
 EXPOSE 8080
