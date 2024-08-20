@@ -7,7 +7,6 @@ package com.footy.blog.helper;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Locale;
 
 public class ConnectionProvider {
 
@@ -21,13 +20,13 @@ public class ConnectionProvider {
 
                 // Fetch connection details from environment variables
                 String host = System.getenv("DB_HOST");
-                String port = System.getenv("DB_PORT");
+                int port = System.getenv("DB_PORT");
                 String databaseName = System.getenv("DB_NAME");
                 String user = System.getenv("DB_USER");
                 String password = System.getenv("DB_PASSWORD");
 
                 // Construct the database URL with SSL mode enabled
-                String url = "jdbc:mysql://" + host + ":" + port + "/" + databaseName + "?sslmode=require";
+                String url = "jdbc:mysql://" + host + ":" + port + "/" + databaseName + "?useSSL=true&requireSSL=true";
 
                 // Create the connection
                 con = DriverManager.getConnection(url, user, password);
@@ -39,4 +38,3 @@ public class ConnectionProvider {
         return con;
     }
 }
-
