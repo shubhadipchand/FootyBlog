@@ -20,7 +20,7 @@ public class ConnectionProvider {
 
                 // Fetch connection details from environment variables
                 String host = System.getenv("DB_HOST");
-                int port = System.getenv(DB_PORT);
+                String port = System.getenv("DB_PORT");
                 String databaseName = System.getenv("DB_NAME");
                 String user = System.getenv("DB_USER");
                 String password = System.getenv("DB_PASSWORD");
@@ -38,3 +38,4 @@ public class ConnectionProvider {
         return con;
     }
 }
+
