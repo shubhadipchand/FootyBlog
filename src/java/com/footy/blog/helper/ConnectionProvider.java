@@ -23,7 +23,7 @@ public class ConnectionProvider {
                 int port = 22785;
                 String databaseName = "defaultdb";
                 String user = "avnadmin";
-                String password = System.geten("DB_PASSWORD");
+                String password = System.getenv("DB_PASSWORD");
 
                 // Construct the database URL with SSL mode enabled
                 String url = "jdbc:mysql://" + host + ":" + port + "/" + databaseName + "?useSSL=true&requireSSL=true";
