@@ -9,3 +9,6 @@ COPY FootyBlog.war /usr/local/tomcat/webapps/FootyBlog.war
 
 # Expose the port Tomcat runs on
 EXPOSE 8080
+
+# Run Tomcat
+CMD ["catalina.sh", "run"]
