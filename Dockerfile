@@ -1,24 +1,15 @@
-# FIXED: Use a valid base image (Java 17 LTS is stable and works well with Tomcat 9)
-FROM eclipse-temurin:17-jdk-jammy
+# Use Tomcat 9 running on Java 21 (Compatible with your Java 20 build)
+FROM tomcat:9.0-jdk21-temurin-jammy
 
-# Set environment variables for Tomcat
-ENV TOMCAT_VERSION=9.0.73
-ENV CATALINA_HOME=/usr/local/tomcat
-ENV PATH=$CATALINA_HOME/bin:$PATH
+# Remove default Tomcat applications
+RUN rm -rf /usr/local/tomcat/webapps/*
 
-# Install dependencies and Tomcat
-RUN apt-get update && \
-    apt-get install -y wget && \
-    wget https://archive.apache.org/dist/tomcat/tomcat-9/v$TOMCAT_VERSION/bin/apache-tomcat-$TOMCAT_VERSION.tar.gz && \
-    tar xzvf apache-tomcat-$TOMCAT_VERSION.tar.gz && \
-    mv apache-tomcat-$TOMCAT_VERSION /usr/local/tomcat && \
-    rm apache-tomcat-$TOMCAT_VERSION.tar.gz && \
-    rm -rf /usr/local/tomcat/webapps/*
-
-WORKDIR /usr/local/tomcat
-
-# Copy the WAR file (This will fail if FootyBlog.war is not in your GitHub repo!)
+# Copy your WAR file to the container
+# IMPORTANT: Ensure 'FootyBlog.war' exists in your GitHub repository!
 COPY FootyBlog.war /usr/local/tomcat/webapps/ROOT.war
 
+# Expose the standard Tomcat port
 EXPOSE 8080
+
+# Start Tomcat
 CMD ["catalina.sh", "run"]
