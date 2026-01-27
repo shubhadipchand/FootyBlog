@@ -1,42 +1,41 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
-package com.footy.blog.helper;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Locale;
+import java.sql.Statement;
 
-public class ConnectionProvider {
+public class MySqlExample {
+    public static void main(String[] args) throws ClassNotFoundException {
+        
+        // 1. Fetch connection details from environment variables
+        String host = System.getenv("DB_HOST");
+        String port = System.getenv("DB_PORT");
+        String databaseName = System.getenv("DB_NAME");
+        String user = System.getenv("DB_USER");
+        String password = System.getenv("DB_PASSWORD");
 
-    private static Connection con;
-
-    public static Connection getConnection() {
-        try {
-            if (con == null) {
-                // Load the MySQL driver class
-                Class.forName("com.mysql.cj.jdbc.Driver");
-
-                // Fetch connection details from environment variables
-                String host = System.getenv("DB_HOST");
-                String port = System.getenv("DB_PORT");
-                String databaseName = System.getenv("DB_NAME");
-                String user = System.getenv("DB_USER");
-                String password = System.getenv("DB_PASSWORD");
-
-                // Construct the database URL with SSL mode enabled
-                String url = "mysql://" + user + ":" + password + "@" + host + ":" + port + "/footyblog?ssl-mode=REQUIRED"
-
-                // Create the connection
-                con = DriverManager.getConnection(url, user, password);
-            }
-        } catch (ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+        // 2. Validate that essential variables exist
+        if (host == null || port == null || databaseName == null) {
+            System.out.println("Error: Missing required environment variables (DB_HOST, DB_PORT, DB_NAME).");
+            return;
         }
 
-        return con;
+        // 3. Load the MySQL Driver
+        Class.forName("com.mysql.cj.jdbc.Driver");
+
+        // 4. Establish the connection
+        try (final Connection connection = DriverManager.getConnection(
+                "jdbc:mysql://" + host + ":" + port + "/" + databaseName + "?sslmode=require", user, password);
+             final Statement statement = connection.createStatement();
+             final ResultSet resultSet = statement.executeQuery("SELECT version() AS version")) {
+
+            while (resultSet.next()) {
+                System.out.println("Connected Successfully! MySQL Version: " + resultSet.getString("version"));
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Connection failure.");
+            e.printStackTrace();
+        }
     }
 }
-
