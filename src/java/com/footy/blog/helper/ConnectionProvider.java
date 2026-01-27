@@ -27,7 +27,7 @@ public class ConnectionProvider {
                 String password = System.getenv("DB_PASSWORD");
 
                 // Construct the database URL with SSL mode enabled
-                String url = "jdbc:mysql://" + host + ":" + port + "/" + databaseName + "?sslmode=require";
+                String url = "mysql://" + user + ":" + password + "@" + host + ":" + port + "/footyblog?ssl-mode=REQUIRED"
 
                 // Create the connection
                 con = DriverManager.getConnection(url, user, password);
