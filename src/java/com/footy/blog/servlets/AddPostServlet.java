@@ -21,75 +21,71 @@ import java.io.File;
 @MultipartConfig
 public class AddPostServlet extends HttpServlet {
 
-    
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
+        
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-         
+            
+            // 1. Fetch Form Data
             int cid = Integer.parseInt(request.getParameter("cid"));
             String pTitle = request.getParameter("pTitle");
             String pContent = request.getParameter("pContent");
             String pPublisher = request.getParameter("pPublisher");
+            
+            // 2. Handle Image Upload
             Part part = request.getPart("pPic");
             String image = part.getSubmittedFileName();
             
-            out.println("Your post title is " + pTitle);
-            out.println(part.getSubmittedFileName());
+            // 3. Create Post Object
+            Post p = new Post(pTitle, pContent, image, null, cid, pPublisher);
             
-            Post p = new Post(pTitle,  pContent, image, null, cid, pPublisher);
+            // 4. Initialize DAO with Cloud Connection
+            // (Assumes ConnectionProvider is updated to use System.getenv)
             PostDao dao = new PostDao(ConnectionProvider.getConnection());
-            
             
             if (dao.savePost(p)) {
                 
-                String directoryPath = "C:\\Users\\shubh\\OneDrive\\Documents\\NetBeansProjects\\FootyBlog\\web\\";
-                String path = directoryPath + "blogpics" + File.separator +  part.getSubmittedFileName();
-                Helper.saveFile(part.getInputStream(), path);
+                // --- FIXED PATH LOGIC FOR CLOUD/LINUX ---
+                
+                // Get the real path of the "web" folder on the server
+                String webPath = request.getServletContext().getRealPath("/");
+                
+                // Construct path to "blogpics"
+                String savePath = webPath + "blogpics" + File.separator + image;
+                
+                // Create the folder if it doesn't exist (Critical for new deployments)
+                File fileSaveDir = new File(webPath + "blogpics");
+                if (!fileSaveDir.exists()) {
+                    fileSaveDir.mkdir();
+                }
+                
+                // Save the file
+                Helper.saveFile(part.getInputStream(), savePath);
                 
                 out.println("done");
                 
             } else {
                 out.println("error");
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
     @Override
     public String getServletInfo() {
         return "Short description";
